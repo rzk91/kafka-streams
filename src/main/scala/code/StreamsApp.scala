@@ -42,6 +42,7 @@ object StreamsApp extends LazyLogging {
       builder.stream[String, FlightTimes](Kafka.topicFlightStarts)
 
     analyseFlightTimes(flightStartStream)
+      .to(Kafka.topicFlightDelayed)
 
     val topology = builder.build()
     logger.info(s"${topology.describe()}")
@@ -65,12 +66,22 @@ object StreamsApp extends LazyLogging {
 
   def analyseFlightTimes(
     startStream: KStream[String, FlightTimes]
-  ): Unit =
+  ): KStream[String, FlightDelayed] =
     startStream
       .selectKey((_, times) => times.flightId)
       .mapValues(Option(_))
-      .foreach {
+      .peek {
         case (key, times) =>
-          logger.info(s"Incoming event: key = $key, flight times = $times")
+          logger.trace(s"Incoming event: key = $key, flight times = $times")
+      }
+      .flatMapValues {
+        case Some(times) if times.startId != 1 =>
+          Some(FlightDelayed(times.flightId, true))
+        case Some(times) => Some(FlightDelayed(times.flightId, false))
+        case _           => None
+      }
+      .peek {
+        case (key, delayed) =>
+          logger.trace(s"Outgoing event: key = $key, flight delayed = $delayed")
       }
 }

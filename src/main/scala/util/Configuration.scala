@@ -35,7 +35,7 @@ object Configuration extends LazyLogging {
     lazy val topicFlightEnds: String = kafkaConfig.getString("topic.events-end")
 
     lazy val topicFlightDelayed: String =
-      kafkaConfig.getString("topic.flight-delayed")
+      kafkaConfig.getString("topic.events-delayed")
 
     lazy val groupIdPrefix: String = if (runningLocally) {
       s"$env-${System.getProperty("user.name")}"
