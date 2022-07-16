@@ -3,6 +3,8 @@ name := "kafka-streams"
 organization := "rzk.scala"
 version := "1.0"
 
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+
 libraryDependencies ++= kafkaDependencies ++ otherDependencies
 
 val kafkaVersion = "3.2.0"

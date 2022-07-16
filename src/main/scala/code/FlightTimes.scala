@@ -2,7 +2,7 @@ package code
 
 final case class FlightTimes(
   timestamp: Long,
-  flightId: Int,
+  flightId: String,
   startId: Int,
   destinationId: Int,
   started: Boolean

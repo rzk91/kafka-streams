@@ -1,13 +1,15 @@
 package util
 
 import util.SinkStatus._
-import com.typesafe.scalalogging.LazyLogging
+
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import java.util.Properties
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.streams.StreamsConfig
+
+import java.util.Properties
 
 object Configuration extends LazyLogging {
 
@@ -46,11 +48,11 @@ object Configuration extends LazyLogging {
 
     def consumerConfig[A](groupId: String, keySerde: Serde[A]): Properties = {
       val props = new Properties()
-      props.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
-      props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, s"$groupIdPrefix-$groupId")
-      props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
-      props.setProperty(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed")
-      props.setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, keySerde.getClass.toString)
+      props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
+      props.put(StreamsConfig.APPLICATION_ID_CONFIG, s"$groupIdPrefix-$groupId")
+      props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+      props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed")
+      props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, keySerde.getClass)
 
       props
     }
